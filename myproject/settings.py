@@ -89,3 +89,4 @@ LOGIN_REDIRECT_URL = 'home'
 SESSION_COOKIE_AGE = 3600  # 1 hour
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CSRF_TRUSTED_ORIGINS = ['https://routeway-production.up.railway.app']
