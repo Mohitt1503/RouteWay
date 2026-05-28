@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RouteWay – Register</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{min-height:100vh;background:#060d1a;overflow-x:hidden;position:relative;}
+.bg-scene{position:fixed;inset:0;z-index:0;background:linear-gradient(135deg,#060d1a,#0a1628,#071220);overflow:hidden;}
+.road{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to top,#111827,#1f2937);border-top:3px solid #374151;}
+.road-line{position:absolute;top:50%;left:-200px;width:200px;height:5px;border-radius:4px;background:linear-gradient(90deg,transparent,#f59e0b,transparent);animation:roadMove 2s linear infinite;}
+.road-line:nth-child(2){animation-delay:.5s;left:-400px;}.road-line:nth-child(3){animation-delay:1s;left:-600px;}
+@keyframes roadMove{to{left:110%;}}
+.stars{position:absolute;inset:0;}
+.star{position:absolute;border-radius:50%;background:white;animation:twinkle 3s ease-in-out infinite;}
+@keyframes twinkle{0%,100%{opacity:.2;}50%{opacity:1;}}
+.moon{position:absolute;top:6%;left:8%;width:55px;height:55px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fef3c7,#fbbf24);box-shadow:0 0 30px 10px rgba(251,191,36,.2);}
+.page-wrapper{position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;padding:40px 20px;justify-content:center;}
+.card-wrap{display:flex;gap:0;max-width:900px;width:100%;background:rgba(255,255,255,.05);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.12);border-radius:28px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,.5);}
+.left-side{background:linear-gradient(135deg,rgba(37,99,235,.3),rgba(56,189,248,.15));padding:40px;display:flex;flex-direction:column;justify-content:center;min-width:280px;}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+.brand-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#38bdf8);display:flex;align-items:center;justify-content:center;font-size:24px;}
+.brand-name{font-size:24px;font-weight:800;color:white;letter-spacing:.5px;}
+.brand-name span{color:#38bdf8;}
+.perk{display:flex;align-items:center;gap:10px;margin-bottom:16px;color:#e2e8f0;font-size:14px;}
+.perk-dot{width:8px;height:8px;border-radius:50%;background:#38bdf8;flex-shrink:0;}
+.right-side{padding:40px;flex:1;}
+.form-title{font-size:22px;font-weight:700;color:white;margin-bottom:4px;}
+.form-sub{color:#64748b;font-size:14px;margin-bottom:28px;}
+.inp-wrap{position:relative;margin-bottom:16px;}
+.inp-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#64748b;font-size:16px;z-index:2;transition:.3s;}
+.form-inp{width:100%;padding:13px 14px 13px 44px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:white!important;font-size:14px;outline:none;transition:.3s;font-family:'Poppins',sans-serif;-webkit-text-fill-color:white!important;}
+.form-inp::placeholder{color:#9ca3af!important;}
+input:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px rgba(15,30,60,.9) inset!important;-webkit-text-fill-color:white!important;}
+.form-inp:focus{background:rgba(56,189,248,.08);border-color:rgba(56,189,248,.5);box-shadow:0 0 0 3px rgba(56,189,248,.1);}
+.inp-wrap:focus-within .inp-icon{color:#38bdf8;}
+.btn-register{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(90deg,#2563eb,#38bdf8);color:white;font-size:15px;font-weight:600;cursor:pointer;transition:.3s;box-shadow:0 8px 25px rgba(37,99,235,.3);}
+.btn-register:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(37,99,235,.5);}
+.alert-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:11px 14px;color:#fca5a5;font-size:13px;display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.login-link{text-align:center;margin-top:18px;color:#64748b;font-size:14px;}
+.login-link a{color:#38bdf8;text-decoration:none;font-weight:600;}
+@media(max-width:700px){.left-side{display:none;}.right-side{padding:28px;}}
+</style>
+</head>
+<body>
+<div class="bg-scene">
+  <div class="moon"></div>
+  <div class="stars" id="stars"></div>
+  <div class="road"><div class="road-line"></div><div class="road-line"></div><div class="road-line"></div></div>
+</div>
+<div class="page-wrapper">
+  <div class="card-wrap">
+    <!-- Left -->
+    <div class="left-side">
+      <div class="brand">
+        <div class="brand-icon"><i class="bi bi-bus-front-fill text-white"></i></div>
+        <div class="brand-name">Route<span>Way</span></div>
+      </div>
+      <h3 style="color:white;font-weight:700;margin-bottom:8px;">Join 50,000+<br>Travelers</h3>
+      <p style="color:#94a3b8;font-size:14px;margin-bottom:28px;">Start your journey with RouteWay today.</p>
+      <div class="perk"><div class="perk-dot"></div>Visual seat selection</div>
+      <div class="perk"><div class="perk-dot"></div>Digital PDF tickets with QR</div>
+      <div class="perk"><div class="perk-dot"></div>RouteWay Wallet & refunds</div>
+      <div class="perk"><div class="perk-dot"></div>Promo codes & discounts</div>
+      <div class="perk"><div class="perk-dot"></div>Round trip booking</div>
+      <div class="perk"><div class="perk-dot"></div>Travel history & reviews</div>
+    </div>
+    <!-- Right -->
+    <div class="right-side">
+      <div class="form-title">Create your account</div>
+      <div class="form-sub">Free to join. No credit card required.</div>
+      {% if error %}<div class="alert-err"><i class="bi bi-exclamation-triangle-fill"></i> {{ error }}</div>{% endif %}
+      <form action="{% url 'signup' %}" method="post">
+        {% csrf_token %}
+        <div class="inp-wrap">
+          <input name="email" type="email" class="form-inp" placeholder="Email address" required>
+          <i class="bi bi-envelope-fill inp-icon"></i>
+        </div>
+        <div class="inp-wrap">
+          <input name="name" type="text" class="form-inp" placeholder="Choose a username" required autofocus>
+          <i class="bi bi-person-fill inp-icon"></i>
+        </div>
+        <div class="inp-wrap">
+          <input name="password" type="password" class="form-inp" placeholder="Create password (min 6 chars)" required minlength="6" id="regPwd">
+          <i class="bi bi-lock-fill inp-icon" style="cursor:pointer;" onclick="togglePwd()"></i>
+        </div>
+        <!-- Password strength -->
+        <div style="margin-bottom:18px;">
+          <div style="height:4px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden;">
+            <div id="strengthBar" style="height:100%;width:0%;border-radius:4px;transition:.3s;background:#ef4444;"></div>
+          </div>
+          <div id="strengthText" style="font-size:11px;color:#64748b;margin-top:4px;"></div>
+        </div>
+        <button type="submit" class="btn-register"><i class="bi bi-person-check-fill me-2"></i>Create Account</button>
+      </form>
+      <div class="login-link">Already have an account? <a href="{% url 'signin' %}">Login →</a></div>
+    </div>
+  </div>
+</div>
+<script>
+const starsEl=document.getElementById('stars');
+for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*2+.5;s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*80}%;left:${Math.random()*100}%;animation-delay:${Math.random()*4}s;animation-duration:${2+Math.random()*3}s;`;starsEl.appendChild(s);}
+
+function togglePwd(){const f=document.getElementById('regPwd');f.type=f.type==='password'?'text':'password';}
+
+document.getElementById('regPwd').addEventListener('input',function(){
+  const v=this.value;const bar=document.getElementById('strengthBar');const txt=document.getElementById('strengthText');
+  let score=0;
+  if(v.length>=6)score++;if(v.length>=10)score++;if(/[A-Z]/.test(v))score++;if(/[0-9]/.test(v))score++;if(/[^A-Za-z0-9]/.test(v))score++;
+  const levels=[['0%','',''],['20%','#ef4444','Weak'],['40%','#f59e0b','Fair'],['60%','#fbbf24','Good'],['80%','#22c55e','Strong'],['100%','#16a34a','Very Strong']];
+  bar.style.width=levels[score][0];bar.style.background=levels[score][1];txt.textContent=levels[score][2];txt.style.color=levels[score][1];
+});
+</script>
+</body>
+</html>

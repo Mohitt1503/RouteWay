@@ -1,0 +1,202 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-md-9">
+    <div class="custom-card">
+      <h2 class="text-center fw-bold mb-4"><i class="bi bi-credit-card-2-front"></i> Complete Your Booking</h2>
+
+      <!-- Booking Summary -->
+      <div class="p-3 mb-4" style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:16px;">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h5 class="fw-bold mb-1">{{ bus.bus_name }} <span class="badge bg-secondary ms-2" style="font-size:11px;">{{ bus.get_bus_type_display }}</span></h5>
+            <p class="mb-1" style="color:#94a3b8;">{{ bus.source }} → {{ bus.dest }} &nbsp;|&nbsp; {{ bus.date }} &nbsp;|&nbsp; {{ bus.time }}</p>
+            <p class="mb-0" style="font-size:13px;">Seats: <strong>{{ seat_string }}</strong> &nbsp;|&nbsp; Qty: <strong>{{ total_seats }}</strong></p>
+          </div>
+          <div class="col-md-4 text-md-end mt-2 mt-md-0">
+            <div style="font-size:13px;color:#94a3b8;">Total</div>
+            <div style="font-size:28px;font-weight:800;color:#22c55e;">₹<span id="displayTotal">{{ total_cost }}</span></div>
+            {% if price_surge %}<div style="font-size:12px;color:#f59e0b;">🔥 Dynamic price applied</div>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- SINGLE FORM WRAPPING EVERYTHING -->
+      <form method="POST" id="payForm" action="{% url 'confirm_booking' bus.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="seat_string" value="{{ seat_string }}">
+        <input type="hidden" name="total_seats" value="{{ total_seats }}">
+        <input type="hidden" name="total_cost" id="totalCostInput" value="{{ total_cost }}">
+        <input type="hidden" name="original_cost" value="{{ original_cost }}">
+        <input type="hidden" name="discount_amount" id="discountInput" value="0">
+        <input type="hidden" name="promo_applied" id="promoApplied" value="">
+        <input type="hidden" name="use_wallet" id="useWalletInput" value="0">
+        <input type="hidden" name="payment_done" value="yes">
+
+        <!-- Passenger Details -->
+        <h5 class="fw-bold mb-3"><i class="bi bi-people-fill text-info"></i> Passenger Details</h5>
+        {% for i in passenger_range %}
+        <div class="p-3 mb-3" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;">
+          <div style="font-size:13px;color:#94a3b8;margin-bottom:10px;">Passenger {{ i }}</div>
+          <div class="row g-2">
+            <div class="col-md-5">
+              <input type="text" class="form-control" name="p_name_{{ i }}" placeholder="Full Name" required>
+            </div>
+            <div class="col-md-3">
+              <input type="number" class="form-control" name="p_age_{{ i }}" placeholder="Age" min="1" max="120" required>
+            </div>
+            <div class="col-md-4">
+              <select class="form-control" name="p_gender_{{ i }}" style="background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:12px;">
+                <option value="Male" style="background:#1e293b;">Male</option>
+                <option value="Female" style="background:#1e293b;">Female</option>
+                <option value="Other" style="background:#1e293b;">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+        <!-- Promo Code -->
+        <div class="mb-4 mt-4">
+          <h5 class="fw-bold mb-3"><i class="bi bi-tag-fill text-warning"></i> Promo Code</h5>
+          <div class="d-flex gap-2 flex-wrap">
+            <input type="text" id="promoInput" class="form-control" placeholder="Enter promo code (e.g. SAVE10)" style="max-width:260px;">
+            <button type="button" onclick="applyPromo()" class="btn btn-warning" style="border-radius:12px;">Apply</button>
+            <button type="button" onclick="removePromo()" class="btn btn-outline-secondary" style="border-radius:12px;display:none;" id="removePromoBtn">Remove</button>
+          </div>
+          <div id="promoMsg" class="mt-2" style="font-size:13px;"></div>
+        </div>
+
+        <!-- Wallet -->
+        {% if wallet_balance > 0 %}
+        <div class="mb-4 p-3" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:14px;">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <strong><i class="bi bi-wallet2 text-success me-2"></i>RouteWay Wallet</strong>
+              <div style="font-size:13px;color:#94a3b8;margin-top:3px;">Available balance: <strong class="text-success">₹{{ wallet_balance }}</strong></div>
+            </div>
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="useWallet" onchange="toggleWallet()" style="width:44px;height:22px;">
+              <label class="form-check-label ms-2" for="useWallet">Use</label>
+            </div>
+          </div>
+          <div id="walletSaving" style="display:none;font-size:13px;color:#22c55e;margin-top:8px;">
+            <i class="bi bi-check-circle-fill me-1"></i><span id="walletSavingText"></span>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Card Details -->
+        <h5 class="fw-bold mb-3 mt-4"><i class="bi bi-credit-card text-info"></i> Card Details <span style="font-size:12px;color:#64748b;font-weight:400;">(Demo — no real payment)</span></h5>
+
+        <div class="mb-3">
+          <label class="form-label" style="font-size:13px;color:#94a3b8;">Card Holder Name</label>
+          <input type="text" class="form-control" placeholder="Name as on card" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" style="font-size:13px;color:#94a3b8;">Card Number</label>
+          <input type="tel" class="form-control" maxlength="19" placeholder="1234 5678 9012 3456" id="cardNum" required>
+        </div>
+        <div class="row g-3 mb-4">
+          <div class="col-6">
+            <label class="form-label" style="font-size:13px;color:#94a3b8;">Expiry Date</label>
+            <input type="text" class="form-control" placeholder="MM/YY" maxlength="5" id="expiry" required>
+          </div>
+          <div class="col-6">
+            <label class="form-label" style="font-size:13px;color:#94a3b8;">CVV</label>
+            <input type="password" class="form-control" maxlength="4" placeholder="•••" required>
+          </div>
+        </div>
+
+        <!-- Pay Button -->
+        <button class="btn btn-custom w-100" type="submit" style="padding:16px;font-size:16px;font-weight:700;">
+          <i class="bi bi-shield-check me-2"></i>Pay ₹<span id="payBtnTotal">{{ total_cost }}</span> Securely
+        </button>
+
+        <div class="text-center mt-3" style="font-size:12px;color:#64748b;">
+          <i class="bi bi-lock-fill me-1"></i> Secured & encrypted · Demo payment only
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  let baseTotal = parseFloat('{{ total_cost }}');
+  let walletBal = parseFloat('{{ wallet_balance|default:0 }}');
+  let currentDiscount = 0;
+  let walletUsed = 0;
+
+  // Card number formatting
+  document.getElementById('cardNum').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g,'').substring(0,16);
+    e.target.value = v.replace(/(.{4})/g,'$1 ').trim();
+  });
+
+  // Expiry formatting
+  document.getElementById('expiry').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g,'').substring(0,4);
+    if(v.length >= 3) v = v.substring(0,2) + '/' + v.substring(2);
+    e.target.value = v;
+  });
+
+  function applyPromo() {
+    const code = document.getElementById('promoInput').value.trim().toUpperCase();
+    if(!code){ alert('Please enter a promo code'); return; }
+    const msg = document.getElementById('promoMsg');
+    msg.innerHTML = '<span style="color:#94a3b8;">Checking...</span>';
+
+    fetch("{% url 'validate_promo' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: `code=${code}&total=${baseTotal}`
+    })
+    .then(r => r.json())
+    .then(data => {
+      if(data.valid) {
+        currentDiscount = parseFloat(data.discount);
+        document.getElementById('discountInput').value = currentDiscount;
+        document.getElementById('promoApplied').value = code;
+        msg.innerHTML = `<span style="color:#22c55e;"><i class="bi bi-check-circle-fill me-1"></i>${data.percent}% off! You save ₹${data.discount}</span>`;
+        document.getElementById('removePromoBtn').style.display = 'inline-block';
+        updateTotal();
+      } else {
+        msg.innerHTML = `<span style="color:#ef4444;"><i class="bi bi-x-circle-fill me-1"></i>${data.msg}</span>`;
+      }
+    })
+    .catch(() => { msg.innerHTML = '<span style="color:#ef4444;">Error checking promo. Try again.</span>'; });
+  }
+
+  function removePromo() {
+    currentDiscount = 0;
+    document.getElementById('discountInput').value = 0;
+    document.getElementById('promoApplied').value = '';
+    document.getElementById('promoInput').value = '';
+    document.getElementById('promoMsg').innerHTML = '';
+    document.getElementById('removePromoBtn').style.display = 'none';
+    updateTotal();
+  }
+
+  function toggleWallet() {
+    const checked = document.getElementById('useWallet').checked;
+    const currentTotal = baseTotal - currentDiscount;
+    walletUsed = checked ? Math.min(walletBal, currentTotal) : 0;
+    document.getElementById('useWalletInput').value = checked ? '1' : '0';
+    const div = document.getElementById('walletSaving');
+    div.style.display = walletUsed > 0 ? 'block' : 'none';
+    document.getElementById('walletSavingText').textContent = `₹${walletUsed.toFixed(2)} will be deducted from your wallet`;
+    updateTotal();
+  }
+
+  function updateTotal() {
+    const newTotal = Math.max(0, baseTotal - currentDiscount - walletUsed);
+    document.getElementById('totalCostInput').value = newTotal.toFixed(2);
+    document.getElementById('displayTotal').textContent = newTotal.toFixed(2);
+    document.getElementById('payBtnTotal').textContent = newTotal.toFixed(2);
+  }
+</script>
+{% endblock %}

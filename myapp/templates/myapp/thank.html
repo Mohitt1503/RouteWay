@@ -1,0 +1,31 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-6">
+
+        <div class="custom-card text-center">
+
+            <h1 class="text-success fw-bold">
+                Registration Successful
+            </h1>
+
+            <p class="mt-3">
+                Thank you for creating an account with RouteWay.
+            </p>
+
+            <div class="mt-4">
+                <a href="{% url 'home' %}" class="btn btn-custom">
+                    Continue
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

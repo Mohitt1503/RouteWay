@@ -1,0 +1,89 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+<div class="container">
+  <h2 class="fw-bold text-center mb-4"><i class="bi bi-bus-front-fill"></i> Available Buses</h2>
+
+  {% if nearby %}
+  <div class="alert alert-warning mb-4">
+    No buses found for your exact route. Try departing from: <strong>{{ nearby|join:", " }}</strong>
+  </div>
+  {% endif %}
+
+  <div class="row">
+    {% for bus in bus_list %}
+    <div class="col-md-6 mb-4">
+      <div class="custom-card h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h4 class="fw-bold" style="color:#38bdf8;">{{ bus.bus_name }}</h4>
+            <p class="text-muted mb-1">{{ bus.source }} → {{ bus.dest }}</p>
+            <span class="badge bg-secondary">{{ bus.get_bus_type_display }}</span>
+            {% if bus.amenities %}<small class="text-muted ms-2"><i class="bi bi-stars"></i> {{ bus.amenities }}</small>{% endif %}
+          </div>
+          <i class="bi bi-bus-front-fill" style="font-size:44px;color:#38bdf8;opacity:.7;"></i>
+        </div>
+        <hr style="border-color:rgba(255,255,255,.15);">
+        <div class="row text-center">
+          <div class="col-3">
+            <div style="font-size:11px;" class="text-muted">Seats Left</div>
+            <span class="badge {% if bus.rem > 5 %}bg-success{% elif bus.rem > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %} p-2">{{ bus.rem }}</span>
+          </div>
+          <div class="col-3">
+            <div style="font-size:11px;" class="text-muted">Price</div>
+            <span class="badge bg-dark p-2">₹{{ bus.dynamic_price }}</span>
+            {% if bus.dynamic_price != bus.base_price %}<div style="font-size:10px;color:#f59e0b;">🔥 Surge</div>{% endif %}
+          </div>
+          <div class="col-3">
+            <div style="font-size:11px;" class="text-muted">Departs</div>
+            <span class="badge bg-warning text-dark p-2">{{ bus.time }}</span>
+          </div>
+          <div class="col-3">
+            <div style="font-size:11px;" class="text-muted">Rating</div>
+            {% with avg=bus.average_rating %}
+            {% if avg %}<span class="badge bg-info p-2">{{ avg }}★</span>{% else %}<span class="text-muted" style="font-size:12px;">New</span>{% endif %}
+            {% endwith %}
+          </div>
+        </div>
+        <div class="d-grid mt-3">
+          {% if bus.rem > 0 %}
+          <a href="{% url 'select_seats' bus.id %}" class="btn btn-custom"><i class="bi bi-check2-square"></i> Select Seats</a>
+          {% else %}
+          <button class="btn btn-secondary" disabled>Fully Booked</button>
+          {% endif %}
+        </div>
+        <!-- Save Favourite -->
+        <form action="{% url 'save_favourite' %}" method="post" class="mt-2 text-end">
+          {% csrf_token %}
+          <input type="hidden" name="source" value="{{ bus.source }}">
+          <input type="hidden" name="dest" value="{{ bus.dest }}">
+          <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-heart"></i> Save Route</button>
+        </form>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center"><p class="text-muted">No buses found for this route.</p></div>
+    {% endfor %}
+  </div>
+
+  {% if is_round and return_buses %}
+  <h3 class="fw-bold mt-5 mb-3"><i class="bi bi-arrow-return-left"></i> Return Buses</h3>
+  <div class="row">
+    {% for bus in return_buses %}
+    <div class="col-md-6 mb-4">
+      <div class="custom-card h-100">
+        <h4 class="fw-bold" style="color:#22c55e;">{{ bus.bus_name }}</h4>
+        <p class="text-muted">{{ bus.source }} → {{ bus.dest }} | {{ return_date }}</p>
+        <div class="d-grid mt-2">
+          <a href="{% url 'select_seats' bus.id %}" class="btn btn-success">Select Return Seats</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="text-center mt-4">
+    <a href="{% url 'findbus' %}" class="btn btn-outline-light"><i class="bi bi-arrow-left"></i> Search Again</a>
+  </div>
+</div>
+{% endblock %}

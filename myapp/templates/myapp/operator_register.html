@@ -1,0 +1,28 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6">
+    <div class="custom-card">
+      <h3 class="fw-bold mb-4 text-center"><i class="bi bi-building"></i> Bus Operator Registration</h3>
+      <p class="text-muted text-center mb-4">Register your company to list buses on RouteWay. Admin approval required.</p>
+      {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+      <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3"><label class="form-label">Company Name</label>
+          <input name="company" type="text" class="form-control" required placeholder="e.g. Sharma Travels"></div>
+        <div class="mb-3"><label class="form-label">Contact Phone</label>
+          <input name="phone" type="text" class="form-control" required placeholder="+91 XXXXX XXXXX"></div>
+        <div class="mb-3"><label class="form-label">Username</label>
+          <input name="name" type="text" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label">Email</label>
+          <input name="email" type="email" class="form-control" required></div>
+        <div class="mb-4"><label class="form-label">Password</label>
+          <input name="password" type="password" class="form-control" required minlength="6"></div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-custom"><i class="bi bi-send"></i> Register as Operator</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6">
+    <div class="custom-card">
+      <h3 class="fw-bold mb-4"><i class="bi bi-star-fill text-warning"></i> Rate Your Journey</h3>
+      {% if bus %}
+      <p class="text-muted">{{ bus.bus_name }} | {{ book.source }} → {{ book.dest }} | {{ book.date }}</p>
+      {% endif %}
+      <form method="POST">
+        {% csrf_token %}
+        <div class="mb-4">
+          <label class="form-label fw-bold">Your Rating</label>
+          <div class="d-flex gap-2" id="starContainer">
+            {% for i in "12345" %}
+            <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}" class="d-none" required {% if forloop.last %}checked{% endif %}>
+            <label for="star{{ i }}" class="star-label" style="font-size:36px;cursor:pointer;color:#94a3b8;transition:.2s;">★</label>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-bold">Your Review <span class="text-muted">(optional)</span></label>
+          <textarea name="comment" class="form-control" rows="4" placeholder="Tell others about your experience..."></textarea>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-custom"><i class="bi bi-send-fill"></i> Submit Review</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  const stars = document.querySelectorAll('.star-label');
+  const radios = document.querySelectorAll('input[name="rating"]');
+  stars.forEach((star, idx) => {
+    star.addEventListener('mouseover', () => {
+      stars.forEach((s, i) => s.style.color = i <= idx ? '#f59e0b' : '#94a3b8');
+    });
+    star.addEventListener('click', () => {
+      stars.forEach((s, i) => s.style.color = i <= idx ? '#f59e0b' : '#94a3b8');
+    });
+  });
+  document.getElementById('starContainer').addEventListener('mouseleave', () => {
+    const checked = document.querySelector('input[name="rating"]:checked');
+    const val = checked ? parseInt(checked.value) : 0;
+    stars.forEach((s, i) => s.style.color = i < val ? '#f59e0b' : '#94a3b8');
+  });
+  // Init
+  stars.forEach((s, i) => s.style.color = i < 5 ? '#f59e0b' : '#94a3b8');
+</script>
+{% endblock %}

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RouteWay – Login</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{min-height:100vh;background:#060d1a;overflow-x:hidden;}
+.bg-scene{position:fixed;inset:0;z-index:0;background:linear-gradient(135deg,#060d1a,#0a1628,#071220);overflow:hidden;}
+.road{position:absolute;bottom:0;left:0;right:0;height:140px;background:linear-gradient(to top,#111827,#1f2937);border-top:3px solid #374151;}
+.road-line{position:absolute;top:50%;left:-200px;width:200px;height:6px;border-radius:4px;background:linear-gradient(90deg,transparent,#f59e0b,transparent);animation:roadMove 2s linear infinite;}
+.road-line:nth-child(2){animation-delay:.5s;left:-400px;}.road-line:nth-child(3){animation-delay:1s;left:-600px;}.road-line:nth-child(4){animation-delay:1.5s;left:-800px;}
+@keyframes roadMove{to{left:110%;}}
+.stars{position:absolute;inset:0;}
+.star{position:absolute;border-radius:50%;background:white;animation:twinkle 3s ease-in-out infinite;}
+@keyframes twinkle{0%,100%{opacity:.2;}50%{opacity:1;}}
+.bus-scene{position:absolute;bottom:140px;left:-220px;animation:busDrive 14s linear infinite;z-index:2;}
+@keyframes busDrive{0%{left:-220px;}100%{left:110%;}}
+.city{position:absolute;bottom:140px;left:0;right:0;display:flex;align-items:flex-end;gap:4px;z-index:1;}
+.building{background:linear-gradient(to top,#1e293b,#0f172a);border-top:2px solid #334155;position:relative;flex-shrink:0;}
+.win{position:absolute;width:6px;height:8px;border-radius:1px;background:#fbbf24;opacity:.7;animation:winBlink 4s ease-in-out infinite;}
+@keyframes winBlink{0%,100%{opacity:.7;}50%{opacity:.2;}}
+.moon{position:absolute;top:8%;right:12%;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fef3c7,#fbbf24);box-shadow:0 0 40px 15px rgba(251,191,36,.25);}
+.page-wrapper{position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;padding:40px 20px;}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:40px;}
+.brand-icon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#2563eb,#38bdf8);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 8px 25px rgba(37,99,235,.4);}
+.brand-name{font-size:28px;font-weight:800;letter-spacing:.5px;color:white;}
+.brand-name span{color:#38bdf8;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);color:#38bdf8;padding:6px 16px;border-radius:30px;font-size:13px;font-weight:500;margin-bottom:24px;}
+.hero-title{font-size:clamp(32px,4vw,52px);font-weight:800;line-height:1.15;margin-bottom:16px;color:white;}
+.hero-title .accent{background:linear-gradient(90deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{color:#94a3b8;font-size:16px;line-height:1.7;margin-bottom:36px;max-width:460px;}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:36px;}
+.feat{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px;transition:.3s;}
+.feat:hover{background:rgba(56,189,248,.08);border-color:rgba(56,189,248,.3);transform:translateY(-2px);}
+.feat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.feat-text{font-size:13px;font-weight:500;color:#e2e8f0;}
+.stats{display:flex;gap:32px;}
+.stat-num{font-size:26px;font-weight:800;color:#38bdf8;display:block;}
+.stat-label{font-size:12px;color:#64748b;font-weight:500;}
+.bus-types{display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;}
+.bus-type-badge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:6px 14px;font-size:12px;font-weight:500;color:#cbd5e1;}
+
+/* ── LOGIN CARD ── */
+.login-card{background:rgba(15,23,42,.85);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.15);border-radius:28px;padding:40px;box-shadow:0 25px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.1);width:100%;max-width:440px;}
+.login-title{font-size:24px;font-weight:700;color:white;margin-bottom:4px;}
+.login-sub{color:#64748b;font-size:14px;margin-bottom:28px;}
+.inp-wrap{position:relative;margin-bottom:18px;}
+.inp-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#64748b;font-size:18px;pointer-events:none;z-index:3;}
+.eye-icon{pointer-events:all!important;cursor:pointer;right:16px;left:auto!important;}
+
+/* CRITICAL FIX: Force white text in inputs always including autofill */
+.form-inp{
+  width:100%;
+  padding:14px 16px 14px 50px;
+  background:rgba(255,255,255,.10) !important;
+  border:1.5px solid rgba(255,255,255,.2);
+  border-radius:14px;
+  color:#ffffff !important;
+  font-size:15px;
+  outline:none;
+  transition:.3s;
+  font-family:'Poppins',sans-serif;
+  caret-color: white;
+}
+.form-inp::placeholder{color:#6b7280 !important;}
+.form-inp:focus{background:rgba(56,189,248,.12) !important;border-color:rgba(56,189,248,.6);box-shadow:0 0 0 3px rgba(56,189,248,.15);}
+/* Override browser autofill background */
+.form-inp:-webkit-autofill,
+.form-inp:-webkit-autofill:hover,
+.form-inp:-webkit-autofill:focus,
+.form-inp:-webkit-autofill:active{
+  -webkit-box-shadow:0 0 0 60px #0f172a inset !important;
+  -webkit-text-fill-color:#ffffff !important;
+  caret-color: white !important;
+  border-color:rgba(255,255,255,.2) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.btn-login{width:100%;padding:15px;border:none;border-radius:14px;background:linear-gradient(90deg,#2563eb,#38bdf8);color:white;font-size:15px;font-weight:600;cursor:pointer;transition:.3s;letter-spacing:.3px;box-shadow:0 8px 25px rgba(37,99,235,.35);margin-top:6px;}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(37,99,235,.5);}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#374151;font-size:13px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);}
+.btn-otp{width:100%;padding:13px;border-radius:14px;background:transparent;border:1.5px solid rgba(251,191,36,.4);color:#fbbf24;font-size:14px;font-weight:500;cursor:pointer;transition:.3s;}
+.btn-otp:hover{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.7);}
+.alert-err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:12px;padding:12px 16px;color:#fca5a5;font-size:13px;display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.alert-info-msg{background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);border-radius:12px;padding:12px 16px;color:#7dd3fc;font-size:13px;margin-bottom:16px;}
+.register-link{text-align:center;margin-top:22px;color:#64748b;font-size:14px;}
+.register-link a{color:#38bdf8;text-decoration:none;font-weight:600;}
+@media(max-width:991px){.left-panel{display:none!important;}.page-wrapper{justify-content:center;}.login-card{max-width:100%;}}
+</style>
+</head>
+<body>
+<div class="bg-scene">
+  <div class="moon"></div>
+  <div class="stars" id="stars"></div>
+  <div class="city" id="city"></div>
+  <div class="road"><div class="road-line"></div><div class="road-line"></div><div class="road-line"></div><div class="road-line"></div></div>
+  <div class="bus-scene">
+    <svg width="200" viewBox="0 0 220 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="20" width="195" height="52" rx="10" fill="#1e40af" stroke="#3b82f6" stroke-width="2"/>
+      <rect x="18" y="12" width="178" height="14" rx="6" fill="#1d4ed8"/>
+      <rect x="28" y="28" width="28" height="20" rx="4" fill="#bfdbfe" opacity=".9"/>
+      <rect x="64" y="28" width="28" height="20" rx="4" fill="#bfdbfe" opacity=".9"/>
+      <rect x="100" y="28" width="28" height="20" rx="4" fill="#bfdbfe" opacity=".9"/>
+      <rect x="136" y="28" width="28" height="20" rx="4" fill="#bfdbfe" opacity=".9"/>
+      <rect x="168" y="30" width="22" height="32" rx="4" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1.5"/>
+      <circle cx="186" cy="46" r="2.5" fill="#60a5fa"/>
+      <ellipse cx="205" cy="46" rx="5" ry="7" fill="#fef08a" opacity=".9"/>
+      <circle cx="45" cy="75" r="14" fill="#111827" stroke="#374151" stroke-width="2"/>
+      <circle cx="45" cy="75" r="7" fill="#1f2937"/>
+      <circle cx="170" cy="75" r="14" fill="#111827" stroke="#374151" stroke-width="2"/>
+      <circle cx="170" cy="75" r="7" fill="#1f2937"/>
+      <text x="110" y="54" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="bold" font-family="Poppins,sans-serif" letter-spacing="2">ROUTEWAY</text>
+    </svg>
+  </div>
+</div>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="row align-items-center justify-content-between" style="min-height:85vh;">
+
+      <!-- LEFT -->
+      <div class="col-lg-6 left-panel">
+        <div class="brand">
+          <div class="brand-icon"><i class="bi bi-bus-front-fill text-white"></i></div>
+          <div class="brand-name">Route<span>Way</span></div>
+        </div>
+        <div class="hero-tag"><i class="bi bi-lightning-charge-fill"></i> India's Smartest Bus Platform</div>
+        <h1 class="hero-title">Travel Smarter,<br>Book <span class="accent">Faster.</span></h1>
+        <p class="hero-sub">Reserve seats on thousands of buses across India — instantly. Real-time availability, digital tickets, seamless experience.</p>
+        <div class="bus-types">
+          <div class="bus-type-badge">🛏️ Sleeper</div>
+          <div class="bus-type-badge">🌙 Semi-Sleeper</div>
+          <div class="bus-type-badge">❄️ AC Seater</div>
+          <div class="bus-type-badge">🚌 Non-AC</div>
+          <div class="bus-type-badge">⚡ Express</div>
+        </div>
+        <div class="feat-grid">
+          <div class="feat"><div class="feat-icon" style="background:rgba(56,189,248,.15);">🎫</div><div class="feat-text">Instant Booking & Digital Tickets</div></div>
+          <div class="feat"><div class="feat-icon" style="background:rgba(34,197,94,.15);">💺</div><div class="feat-text">Visual Seat Selection</div></div>
+          <div class="feat"><div class="feat-icon" style="background:rgba(251,191,36,.15);">💰</div><div class="feat-text">Dynamic Pricing & Wallet</div></div>
+          <div class="feat"><div class="feat-icon" style="background:rgba(167,139,250,.15);">📄</div><div class="feat-text">PDF Ticket with QR Code</div></div>
+          <div class="feat"><div class="feat-icon" style="background:rgba(249,115,22,.15);">🔄</div><div class="feat-text">Round Trip Support</div></div>
+          <div class="feat"><div class="feat-icon" style="background:rgba(239,68,68,.15);">⭐</div><div class="feat-text">Ratings & Reviews</div></div>
+        </div>
+        <div class="stats">
+          <div class="stat-item"><span class="stat-num">500+</span><span class="stat-label">Daily Routes</span></div>
+          <div class="stat-item"><span class="stat-num">50K+</span><span class="stat-label">Happy Travelers</span></div>
+          <div class="stat-item"><span class="stat-num">100+</span><span class="stat-label">Bus Operators</span></div>
+          <div class="stat-item"><span class="stat-num">24/7</span><span class="stat-label">Support</span></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: LOGIN CARD -->
+      <div class="col-lg-5 d-flex justify-content-center justify-content-lg-end mt-5 mt-lg-0">
+        <div class="login-card">
+          <div class="login-title">Welcome back 👋</div>
+          <div class="login-sub">Login to your RouteWay account</div>
+
+          {% if messages %}{% for message in messages %}<div class="alert-info-msg"><i class="bi bi-info-circle-fill me-2"></i>{{ message }}</div>{% endfor %}{% endif %}
+          {% if error %}<div class="alert-err"><i class="bi bi-exclamation-triangle-fill"></i> {{ error }}</div>{% endif %}
+
+          <form action="{% url 'signin' %}" method="post" autocomplete="on">
+            {% csrf_token %}
+            <div class="inp-wrap">
+              <i class="bi bi-person-fill inp-icon"></i>
+              <input name="name" type="text" class="form-inp" placeholder="Enter your username" required autofocus autocomplete="username">
+            </div>
+            <div class="inp-wrap">
+              <i class="bi bi-lock-fill inp-icon"></i>
+              <input name="password" type="password" class="form-inp" placeholder="Enter your password" required id="pwdField" autocomplete="current-password" style="padding-right:50px;">
+              <i class="bi bi-eye-fill inp-icon eye-icon" id="eyeIcon" onclick="togglePwd()"></i>
+            </div>
+            <button type="submit" class="btn-login"><i class="bi bi-box-arrow-in-right me-2"></i>Login to RouteWay</button>
+          </form>
+
+          <div class="divider">or</div>
+          <a href="{% url 'sendotp' %}" style="text-decoration:none;">
+            <button class="btn-otp"><i class="bi bi-phone me-2"></i>Continue with OTP</button>
+          </a>
+          <div class="register-link">New to RouteWay? <a href="{% url 'signup' %}">Create account →</a></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Stars
+const starsEl=document.getElementById('stars');
+for(let i=0;i<120;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*2.5+.5;s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*75}%;left:${Math.random()*100}%;animation-delay:${Math.random()*4}s;animation-duration:${2+Math.random()*3}s;`;starsEl.appendChild(s);}
+// City
+const city=document.getElementById('city');
+[80,120,60,140,90,110,70,130,85,100,65,150,75,95,115,55,105,125,80,135,70,100,90,60,120].forEach(h=>{
+  const b=document.createElement('div');b.className='building';b.style.cssText=`width:${28+Math.random()*22}px;height:${h}px;`;
+  for(let w=0;w<Math.floor(h/22);w++){const win=document.createElement('div');win.className='win';win.style.cssText=`top:${8+w*20}px;left:${4+Math.floor(Math.random()*2)*12}px;animation-delay:${Math.random()*5}s;`;b.appendChild(win);}
+  city.appendChild(b);
+});
+// Toggle password
+function togglePwd(){
+  const f=document.getElementById('pwdField');
+  const ic=document.getElementById('eyeIcon');
+  if(f.type==='password'){f.type='text';ic.className='bi bi-eye-slash-fill inp-icon eye-icon';}
+  else{f.type='password';ic.className='bi bi-eye-fill inp-icon eye-icon';}
+}
+</script>
+</body>
+</html>

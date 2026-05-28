@@ -1,0 +1,42 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6">
+    <div class="custom-card">
+      <h3 class="fw-bold mb-4 text-center"><i class="bi bi-qr-code-scan"></i> Verify Ticket</h3>
+      <p class="text-muted text-center mb-4">Enter the Booking ID from the passenger's ticket to verify.</p>
+      <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Booking ID</label>
+          <input name="book_id" type="number" class="form-control" placeholder="e.g. 42" required min="1">
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-custom"><i class="bi bi-search"></i> Verify</button>
+        </div>
+      </form>
+      {% if result %}
+      <div class="mt-4">
+        {% if result.found %}
+        <div class="p-3 mt-3" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:16px;">
+          <h5 class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Valid Ticket</h5>
+          <p><strong>Passenger:</strong> {{ result.book.name }}</p>
+          <p><strong>Bus:</strong> {{ result.book.bus_name }}</p>
+          <p><strong>Route:</strong> {{ result.book.source }} → {{ result.book.dest }}</p>
+          <p><strong>Seat(s):</strong> {{ result.book.seat_numbers }}</p>
+          <p><strong>Date:</strong> {{ result.book.date }}</p>
+          <p><strong>Status:</strong>
+            {% if result.book.status == 'B' %}<span class="badge bg-success">Active</span>
+            {% elif result.book.status == 'C' %}<span class="badge bg-danger">Cancelled</span>
+            {% else %}<span class="badge bg-secondary">Completed</span>{% endif %}
+          </p>
+        </div>
+        {% else %}
+        <div class="alert alert-danger mt-3"><i class="bi bi-x-circle-fill"></i> No booking found with this ID.</div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

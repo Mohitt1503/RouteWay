@@ -1,0 +1,85 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+<div class="custom-card mb-4">
+  <h2 class="fw-bold mb-4"><i class="bi bi-ticket-perforated"></i> My Bookings</h2>
+  {% if msg %}<div class="alert alert-info text-center">{{ msg }}</div>
+  {% else %}
+  {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags }} alert-dismissible fade show">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}{% endif %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle" style="color:white;">
+      <thead style="background:#1e293b;color:white;">
+        <tr>
+          <th style="color:white;">Booking ID</th>
+          <th style="color:white;">Bus</th>
+          <th style="color:white;">Route</th>
+          <th style="color:white;">Seat(s)</th>
+          <th style="color:white;">Qty</th>
+          <th style="color:white;">Price</th>
+          <th style="color:white;">Date</th>
+          <th style="color:white;">Status</th>
+          <th style="color:white;">Refund</th>
+          <th style="color:white;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in book_list %}
+        <tr style="color:white;">
+          <td><span class="badge" style="background:linear-gradient(90deg,#2563eb,#38bdf8);font-size:13px;padding:7px 12px;">#{{ row.id }}</span></td>
+          <td style="color:white;font-weight:600;">{{ row.bus_name }}</td>
+          <td style="color:white;">{{ row.source }} → {{ row.dest }}</td>
+          <td><small style="color:#e2e8f0;">{{ row.seat_numbers }}</small></td>
+          <td style="color:white;">{{ row.nos }}</td>
+          <td style="color:white;">₹{{ row.price }}{% if row.discount_amount %}<br><small class="text-success">-₹{{ row.discount_amount }}</small>{% endif %}</td>
+          <td style="color:white;">{{ row.date }}</td>
+          <td>
+            {% if row.status == 'B' %}<span class="badge bg-success">Booked</span>
+            {% elif row.status == 'C' %}<span class="badge bg-danger">Cancelled</span>
+            {% else %}<span class="badge bg-secondary">Completed</span>{% endif %}
+          </td>
+          <td>
+            {% if row.refund_amount %}<small class="text-success">₹{{ row.refund_amount }}<br>wallet</small>
+            {% else %}<span style="color:#94a3b8;">—</span>{% endif %}
+          </td>
+          <td>
+            <div class="d-flex gap-1 flex-wrap">
+              {% if row.status == 'B' %}
+              <a href="{% url 'download_ticket' row.id %}" class="btn btn-sm btn-outline-light" title="Download Ticket"><i class="bi bi-download"></i></a>
+              <button class="btn btn-sm btn-outline-danger cancel-btn" title="Cancel" data-id="{{ row.id }}" onclick="fillCancel({{ row.id }})"><i class="bi bi-x-circle"></i></button>
+              {% endif %}
+              {% if row.status in 'BX' and row.date < today %}
+              <a href="{% url 'submit_review' row.id %}" class="btn btn-sm btn-outline-warning" title="Rate"><i class="bi bi-star"></i></a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+
+<div class="custom-card" id="cancel-card">
+  <h3 class="fw-bold mb-3"><i class="bi bi-x-circle"></i> Cancel a Booking</h3>
+  <p class="text-muted" style="font-size:13px;">Refund Policy: ≥2 days before = 80% | 1 day before = 50% | Same day = 0%. Refund goes to your RouteWay Wallet.</p>
+  <form action="{% url 'cancellings' %}" method="post">
+    {% csrf_token %}
+    <div class="row align-items-end">
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Booking ID</label>
+        <input name="bus_id" id="cancel-id-input" type="number" class="form-control" placeholder="e.g. 12" min="1" required>
+      </div>
+      <div class="col-md-3 mb-3">
+        <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Cancel this booking?')">Cancel Booking</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+function fillCancel(id) {
+  document.getElementById('cancel-id-input').value = id;
+  document.getElementById('cancel-card').scrollIntoView({behavior: 'smooth'});
+}
+</script>
+{% endblock %}
